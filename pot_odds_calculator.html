@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מחשבון Pot Odds</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      direction: rtl;
+      text-align: center;
+      padding: 20px;
+    }
+    input, select, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 1em;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🃏 מחשבון Pot Odds</h1>
+
+  <label>כמה יש בקופה?</label><br>
+  <input type="number" id="pot" placeholder="למשל 1640000"><br>
+
+  <label>כמה אתה צריך לשלם?</label><br>
+  <input type="number" id="call" placeholder="למשל 800000"><br>
+
+  <label>כמה אאוטים יש לך?</label><br>
+  <input type="number" id="outs" placeholder="למשל 9"><br>
+
+  <label>שלב היד:</label><br>
+  <select id="street">
+    <option value="flop">Flop</option>
+    <option value="turn">Turn</option>
+  </select><br>
+
+  <button onclick="calculate()">חשב</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function calculate() {
+      const pot = parseFloat(document.getElementById('pot').value);
+      const call = parseFloat(document.getElementById('call').value);
+      const outs = parseInt(document.getElementById('outs').value);
+      const street = document.getElementById('street').value;
+
+      if (isNaN(pot) || isNaN(call) || isNaN(outs)) {
+        document.getElementById('output').innerText = 'נא למלא את כל השדות.';
+        return;
+      }
+
+      const potOdds = (call / (call + pot)) * 100;
+      const equity = street === 'flop' ? outs * 4 : outs * 2;
+
+      let recommendation = equity >= potOdds ?
+        '✅ משתלם לשלם – יש לך מספיק סיכוי.' :
+        '❌ לא משתלם לשלם – חסר לך Equity.';
+
+      document.getElementById('output').innerHTML =
+        `סיכויי קופה: ${potOdds.toFixed(2)}%<br>` +
+        `סיכוי לפגיעה (משוער): ${equity.toFixed(2)}%<br>` +
+        `<br>${recommendation}`;
+    }
+  </script>
+</body>
+</html>
